@@ -145,7 +145,7 @@ module.exports = (params, callback) => {
 
         ejs.renderFile(template, {
             message: "Success!",
-            content: "You can now use the /hackernews command!"
+            content: "You can now invite @hackernewsbot to your channels and use it!"
         }, {}, (err, response) => callback(err, new Buffer(response || '')));
     });
 };

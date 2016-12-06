@@ -52,6 +52,48 @@ function processEvent(event, team, next) {
     var message = getMessageFromEvent(event, team);
     if (!message) return next && next();
 
+    if (message.type === 'help') {
+        return sendMessage((team.bot || {}).bot_access_token, {
+            text: "Here's how you can use me:",
+            attachments: [{
+                fields: [
+                    {
+                        title: "top",
+                        value: "Shows the top stories",
+                        short: true
+                    },
+                    {
+                        title: "show | Show HN",
+                        value: "Show the top Show HNs",
+                        short: true
+                    },
+                    {
+                        title: "new",
+                        value: "Show the most recent posts",
+                        short: true
+                    },
+                    {
+                        title: "ask | Ask HN",
+                        value: "Show the top Ask HNs",
+                        short: true
+                    },
+                    {
+                        title: "job | job HN",
+                        value: "Show the top job posts",
+                        short: true
+                    },
+                    {
+                        title: "help",
+                        value: "Shows this help text!",
+                        short: true
+                    }
+                ],
+                footer: "Note: you can use multiple commands at the same time!",
+            }],
+            channel: message.channel_id
+        }, next);
+    }
+
     console.log("chain", message.chain);
     async.auto({
         received: (callback) => {
@@ -120,6 +162,10 @@ function getMessageFromEvent(event, team) {
 
     message.chain = getCommandChain(message.text);
 
+
+    if (!message.chain.length && /help/i.test(message.text))
+        message.type = "help";
+
     console.log("message", message);
     return message;
 };
@@ -136,6 +182,11 @@ function getMessageType(text, botId) {
 
 function getCommandChain(text) {
     var availableFunctions = [
+        {
+            name: 'jobStories',
+            description: "Ask HN",
+            match: /job\_hn|job|jobs|job\_hn/i
+        },
         {
             name: 'askStories',
             description: "Ask HN",
