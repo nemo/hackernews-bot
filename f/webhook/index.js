@@ -31,9 +31,6 @@ module.exports = (params, callback) => {
         storage: mongo()
     });
 
-    // Don't block, return right away.
-    callback();
-
     async.auto({
         team: (callback) => {
             controller.storage.teams.get(params.kwargs.team_id, (err, team) => callback(err, team));
@@ -44,6 +41,9 @@ module.exports = (params, callback) => {
 
             return processEvent(params.kwargs.event, results.team, callback);
         }]
+    }, (err) => {
+      // Don't block, return right away.
+      callback(null, "OK");
     });
 };
 

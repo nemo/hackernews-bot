@@ -45,7 +45,6 @@ module.exports = (params, callback) => {
             authAddress += '&redirect_uri=' + process.env.SLACK_REDIRECT;
 
             Request.get(authAddress, function (error, response, body) {
-                debugger;
                 if (error) return callback(error);
 
                 var auth = JSON.parse(body);
@@ -56,14 +55,12 @@ module.exports = (params, callback) => {
             });
         },
         identity: ['auth', (results, callback) => {
-            debugger;
             //first, get authenticating user ID
             var auth = (results || {}).auth || {};
             var url = 'https://slack.com/api/auth.test?'
             url += 'token=' + auth.access_token
 
             Request.get(url, (error, response, body) => {
-                debugger;
                 if (error) return callback(error);
                 try {
                     identity = JSON.parse(body);
@@ -79,13 +76,11 @@ module.exports = (params, callback) => {
 
                     return callback(null, identity);
                 } catch(e) {
-                    debugger
                     return callback(e);
                 }
             });
         }],
         user: ['identity', (results, callback) => {
-            debugger;
             var auth = (results || {}).auth || {};
             var identity = (results || {}).identity || {};
 
@@ -93,7 +88,6 @@ module.exports = (params, callback) => {
             var scopes = auth.scope.split(/\,/);
 
             controller.storage.users.get(identity.user_id, (err, user) => {
-                debugger;
                 if (!user) {
                     user = {
                         id: identity.user_id,
@@ -116,7 +110,6 @@ module.exports = (params, callback) => {
             var scopes = auth.scope.split(/\,/);
 
             controller.storage.teams.get(identity.team_id, (err, team) => {
-                debugger;
                 if (!team) {
                     team = {
                         id: identity.team_id,
@@ -137,7 +130,6 @@ module.exports = (params, callback) => {
             });
         }]
     }, (err, results) => {
-        debugger;
         if (err) return ejs.renderFile(template, {
             message: "Failure",
             content: err && err.message
