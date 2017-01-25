@@ -1,6 +1,6 @@
 {
   "name": "slack-bot",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Hacker News Bot",
   "author": "nemo <nima@halfmoon.ws>",
   "main": "f/auth/index.js",
